@@ -2,6 +2,7 @@ from crewai import Task
 from textwrap import dedent
 
 class CompanyAnalysisTasks:
+    
     def research(self, agent, company, website, industry):
         return Task(
             description=dedent(f"""
@@ -16,7 +17,8 @@ class CompanyAnalysisTasks:
                 - Summary of the industry the company belongs to.
                 - Any recent news or significant events affecting the company.
 
-                Ensure to use the most recent data available.
+                Ensure to use the most recent data available and scrape key pages 
+                such as "About Us", "Products", "Services", etc.
 
                 Selected company by the customer: {company}
                 Company website: {website}

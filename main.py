@@ -25,14 +25,8 @@ class CompanyAnalysisCrew:
         competition_task = tasks.competition_analysis(competition_analyst_agent, research_task)
 
         crew = Crew(
-            agents=[
-                research_agent,
-                competition_analyst_agent
-            ],
-            tasks=[
-                research_task,
-                competition_task
-            ],
+            agents=[research_agent, competition_analyst_agent],
+            tasks=[research_task, competition_task],
             verbose=True
         )
 
@@ -41,22 +35,9 @@ class CompanyAnalysisCrew:
 
 if __name__ == "__main__":
     print("## Welcome to Company Analysis Crew")
-    print('-------------------------------')
-    company = input(
-        dedent("""
-            What is the name of the company you want to analyze?
-        """)
-    )
-    website = input(
-        dedent("""
-            What is the website of the company?
-        """)
-    )
-    industry = input(
-        dedent("""
-            What industry does the company belong to?
-        """)
-    )
+    company = input(dedent("What is the name of the company you want to analyze?\n"))
+    website = input(dedent("What is the website of the company?\n"))
+    industry = input(dedent("What industry does the company belong to?\n"))
 
     company_analysis_crew = CompanyAnalysisCrew(company, website, industry)
     result = company_analysis_crew.run()
