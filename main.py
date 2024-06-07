@@ -3,44 +3,58 @@ from textwrap import dedent
 from dotenv import load_dotenv
 
 from research_agent import TaskAgents
-from research_tasks import CompanyAnalysisTasks
+from research_tasks import GenericProblemSolvingTasks
 
 # Load environment variables from .env file
 load_dotenv()
 
-class CompanyAnalysisCrew:
-    def __init__(self, company, website, industry):
-        self.company = company
-        self.website = website
-        self.industry = industry
+class TaskWeaver:
+    def __init__(self, query):
+        self.query = query
 
     def run(self):
         agents = TaskAgents()
-        tasks = CompanyAnalysisTasks()
+        tasks = GenericProblemSolvingTasks()
 
-        research_agent = agents.research_agent()
-        competition_analyst_agent = agents.competition_analyst()
+        planner = agents.planner_agent()
+        executor = agents.executor_agent()
 
-        research_task = tasks.research(research_agent, self.company, self.website, self.industry)
-        competition_task = tasks.competition_analysis(competition_analyst_agent, research_task)
+        planner_task = tasks.research(planner, self.query)
 
         crew = Crew(
-            agents=[research_agent, competition_analyst_agent],
-            tasks=[research_task, competition_task],
+            agents=[planner],
+            tasks=[planner_task],
             verbose=True
         )
 
+        # Run the planning task to get the list of tasks
         result = crew.kickoff()
-        return result
+        planned_tasks = result  # Assume the result contains a 'tasks' key with the planned tasks
+        print(planned_tasks)
+
+        # # Create execution tasks based on the planned tasks
+        # executor_tasks = tasks.execute_task(executor, planned_tasks)
+
+        # crew = Crew(
+        #     agents=[planner, executor],
+        #     tasks=[planner_task],
+        #     verbose=True
+        # )
+
+        # # Update the crew with the new tasks
+        # crew.tasks.extend(executor_tasks)
+
+        # # Run the execution tasks
+        # final_result = crew.kickoff()
+        return planned_tasks
+
 
 if __name__ == "__main__":
-    print("## Welcome to Company Analysis Crew")
-    company = input(dedent("What is the name of the company you want to analyze?\n"))
-    website = input(dedent("What is the website of the company?\n"))
-    industry = input(dedent("What industry does the company belong to?\n"))
+    print("## Welcome to Taskweaver")
+    query = input(dedent("How can i help you?\n"))
 
-    company_analysis_crew = CompanyAnalysisCrew(company, website, industry)
-    result = company_analysis_crew.run()
+    task_weaver = TaskWeaver(query)
+    result = task_weaver.run()
     print("\n\n########################")
     print("## Here is the Report")
     print("########################\n")

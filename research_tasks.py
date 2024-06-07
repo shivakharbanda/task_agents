@@ -1,49 +1,47 @@
 from crewai import Task
 from textwrap import dedent
 
-class CompanyAnalysisTasks:
+class GenericProblemSolvingTasks:
     
-    def research(self, agent, company, website, industry):
+    def research(self, agent, problem_description):
         return Task(
             description=dedent(f"""
-                Gather comprehensive information about the company. 
-                This includes its products, services, target markets, 
-                and the industry it caters to. Also look for recent news 
-                and significant events.
+                Analyze the provided problem description and generate a comprehensive 
+                plan. This includes identifying all necessary tasks and determining 
+                the order in which they need to be performed. The plan should be detailed 
+                and clear for execution.
 
-                Your final report MUST include:
-                - Detailed descriptions of the company's products and services.
-                - Identification of the target markets.
-                - Summary of the industry the company belongs to.
-                - Any recent news or significant events affecting the company.
+                Problem Description: {problem_description}
 
-                Ensure to use the most recent data available and scrape key pages 
-                such as "About Us", "Products", "Services", etc.
+                Your final plan MUST include:
+                - A list of all tasks required to solve the problem.
+                - The order in which these tasks should be performed.
+                - Any dependencies between tasks.
 
-                Selected company by the customer: {company}
-                Company website: {website}
-                Industry: {industry}
+                Ensure to cover all aspects of the problem and provide a clear roadmap 
+                for execution.
+                return the ouput in json only the json nothing else
             """),
             agent=agent,
-            expected_output="A detailed report with descriptions of the company's products, services, target markets, industry summary, and recent significant events."
+            expected_output="A detailed plan with a list of tasks, their order, and any dependencies."
         )
 
-    def competition_analysis(self, agent, company_info):
+    def execute_task(self, agent, task_description):
         return Task(
             description=dedent(f"""
-                Analyze competitors of the company based on the information collected 
-                by the research agent. Identify companies operating in the same market 
-                and industry. Compare and rank these competitors against the main company.
+                Execute the given task using the best available tools. If a suitable tool 
+                is not found, identify and describe the required tool and raise an exception 
+                to end the process. The executor cannot delegate the tasks further.
 
-                Your final report MUST include:
-                - Names and brief descriptions of key competitors.
-                - Comparison and ranking of competitors against the main company.
-                - Insights on the competitive landscape and market position.
+                Task: {task_description}
 
-                Make sure to provide a comprehensive and detailed analysis.
+                Your final output MUST include:
+                - The results of the executed task.
+                - Any issues encountered and how they were resolved.
+                - If a suitable tool was not found, describe the needed tool and raise an exception.
 
-                Information provided by the research agent: {company_info}
+                Ensure to use the most effective and efficient tools available to complete the task.
             """),
             agent=agent,
-            expected_output="A comprehensive report with names, descriptions, comparisons, and rankings of key competitors, along with insights on the competitive landscape."
+            expected_output="Results of the executed task, resolution of issues, or a description of the needed tool if not found."
         )
